@@ -18,13 +18,33 @@ document.addEventListener('DOMContentLoaded', () => {
     let bannerBaseImage = new Image();
     let avatarBaseImage = new Image();
     let natBaseImage = new Image();
+
+    bannerBaseImage.crossOrigin = "Anonymous";
+    avatarBaseImage.crossOrigin = "Anonymous";
+    natBaseImage.crossOrigin = "Anonymous";
+
     natBaseImage.src = 'https://raw.githubusercontent.com/midjordan23/mememaker/midjordan23-images/base/BaseNatofficial.png';
     
-    let bannerBaseSrc = 'https://raw.githubusercontent.com/midjordan23/mememaker/midjordan23-images/backgrounds/Blue Illustration Anime Girl Twitter Header.png';
+    let bannerBaseSrc = 'https://raw.githubusercontent.com/midjordan23/mememaker/midjordan23-images/backgrounds/Blue%20Illustration%20Anime%20Girl%20Twitter%20Header.png';
     let avatarBaseSrc = 'https://raw.githubusercontent.com/midjordan23/mememaker/midjordan23-images/backgrounds/AVIBASEfirstoption.png';
 
     bannerBaseImage.src = bannerBaseSrc;
     avatarBaseImage.src = avatarBaseSrc;
+
+    bannerBaseImage.onload = () => {
+        console.log("Banner base image loaded");
+        drawMeme();
+    };
+    bannerBaseImage.onerror = () => console.error("Error loading banner base image");
+
+    avatarBaseImage.onload = () => {
+        console.log("Avatar base image loaded");
+        drawMeme();
+    };
+    avatarBaseImage.onerror = () => console.error("Error loading avatar base image");
+
+    natBaseImage.onload = () => console.log("Nat base image loaded");
+    natBaseImage.onerror = () => console.error("Error loading nat base image");
 
     modeSelect.addEventListener('change', () => {
         const selectedMode = modeSelect.value;
@@ -110,11 +130,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const eyes = eyesSelect.value;
         if (eyes !== 'none') {
             const eyesImage = new Image();
+            eyesImage.crossOrigin = "Anonymous";
             eyesImage.src = eyes;
             eyesImage.onload = () => {
                 ctx.drawImage(eyesImage, 0, 0, canvas.width, canvas.height);
                 drawHat();
             };
+            eyesImage.onerror = () => console.error("Error loading eyes image");
         } else {
             drawHat();
         }
@@ -124,10 +146,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const hat = hatSelect.value;
         if (hat !== 'none') {
             const hatImage = new Image();
+            hatImage.crossOrigin = "Anonymous";
             hatImage.src = hat;
             hatImage.onload = () => {
                 ctx.drawImage(hatImage, 0, 0, canvas.width, canvas.height);
             };
+            hatImage.onerror = () => console.error("Error loading hat image");
         }
     }
 
@@ -135,11 +159,13 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.drawImage(bannerBaseImage, 0, 0, canvas.width, canvas.height); 
 
         const baseBannerImage = new Image();
-        baseBannerImage.src = 'https://raw.githubusercontent.com/midjordan23/mememaker/midjordan23-images/base/Base for banner.png';
+        baseBannerImage.crossOrigin = "Anonymous";
+        baseBannerImage.src = 'https://raw.githubusercontent.com/midjordan23/mememaker/midjordan23-images/base/Base%20for%20banner.png';
         baseBannerImage.onload = () => {
             ctx.drawImage(baseBannerImage, 0, 0, canvas.width, canvas.height);
             drawBannerText();
         };
+        baseBannerImage.onerror = () => console.error("Error loading base banner image");
     }
 
     function drawBannerText() {
@@ -156,7 +182,4 @@ document.addEventListener('DOMContentLoaded', () => {
         if (line2Text) ctx.fillText(line2Text, textX, 150);
         if (line3Text) ctx.fillText(line3Text, textX, 190);
     }
-
-    bannerBaseImage.onload = drawMeme;
-    avatarBaseImage.onload = drawMeme;
 });
