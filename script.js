@@ -115,7 +115,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     colorButton.addEventListener('click', () => {
-            colorSelect.addEventListener('input', (e) => {
+        colorSelect.click();
+    });
+
+    colorSelect.addEventListener('input', (e) => {
         drawColor = e.target.value;
         colorButton.style.backgroundColor = drawColor;
     });
@@ -233,7 +236,7 @@ document.addEventListener('DOMContentLoaded', () => {
         drawMeme();
     });
 
-    eyesSelect.addEventListener('change', () => {
+       eyesSelect.addEventListener('change', () => {
         const eyes = eyesSelect.value;
         if (eyes === 'none') {
             eyesImage.src = '';
