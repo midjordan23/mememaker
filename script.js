@@ -18,27 +18,145 @@ document.addEventListener('DOMContentLoaded', () => {
     let bannerBaseImage = new Image();
     let avatarBaseImage = new Image();
     let natBaseImage = new Image();
-    natBaseImage.src = 'base/BaseNatofficial.png'; // Base image that does not change
+    natBaseImage.src = 'https://raw.githubusercontent.com/midjordan23/mememaker/midjordan23-images/base/BaseNatofficial.png';
     
-    let bannerBaseSrc = 'backgrounds/Blue Illustration Anime Girl Twitter Header.png'; // Default banner image
-    let avatarBaseSrc = 'backgrounds/AVIBASEfirstoption.png'; // Default avatar image
+    let bannerBaseSrc = 'https://raw.githubusercontent.com/midjordan23/mememaker/midjordan23-images/backgrounds/Blue Illustration Anime Girl Twitter Header.png';
+    let avatarBaseSrc = 'https://raw.githubusercontent.com/midjordan23/mememaker/midjordan23-images/backgrounds/AVIBASEfirstoption.png';
 
     bannerBaseImage.src = bannerBaseSrc;
     avatarBaseImage.src = avatarBaseSrc;
 
-    // ... (rest of the code remains the same)
+    modeSelect.addEventListener('change', () => {
+        const selectedMode = modeSelect.value;
+        if (selectedMode === 'avatar') {
+            document.getElementById('banner-options').style.display = 'none';
+            document.getElementById('avatar-options').style.display = 'block';
+            canvas.width = 500;
+            canvas.height = 500;
+        } else {
+            document.getElementById('banner-options').style.display = 'block';
+            document.getElementById('avatar-options').style.display = 'none';
+            canvas.width = 1500;
+            canvas.height = 500;
+        }
+        drawMeme();
+    });
+
+    backgroundSelectAvatar.addEventListener('change', () => {
+        avatarBaseSrc = backgroundSelectAvatar.value;
+        avatarBaseImage.src = avatarBaseSrc;
+        avatarBaseImage.onload = drawMeme;
+    });
+
+    backgroundSelect.addEventListener('change', () => {
+        bannerBaseSrc = backgroundSelect.value;
+        bannerBaseImage.src = bannerBaseSrc;
+        bannerBaseImage.onload = drawMeme;
+    });
+
+    uploadBackground.addEventListener('change', (event) => handleFileUpload(event, 'banner'));
+    uploadBackgroundAvatar.addEventListener('change', (event) => handleFileUpload(event, 'avatar'));
+
+    function handleFileUpload(event, mode) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                if (mode === 'banner') {
+                    bannerBaseImage.src = e.target.result;
+                    bannerBaseImage.onload = drawMeme;
+                } else {
+                    avatarBaseImage.src = e.target.result;
+                    avatarBaseImage.onload = drawMeme;
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    generateTextButton.addEventListener('click', drawMeme);
+
+    resetButton.addEventListener('click', () => {
+        line1Input.value = '';
+        line2Input.value = '';
+        line3Input.value = '';
+        hatSelect.value = 'none';
+        eyesSelect.value = 'none';
+        drawMeme();
+    });
+
+    downloadButton.addEventListener('click', () => {
+        const link = document.createElement('a');
+        link.href = canvas.toDataURL('image/png');
+        link.download = 'meme.png';
+        link.click();
+    });
+
+    function drawMeme() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const selectedMode = modeSelect.value;
+
+        if (selectedMode === 'avatar') {
+            drawAvatar();
+        } else {
+            drawBanner();
+        }
+    }
+
+    function drawAvatar() {
+        ctx.drawImage(avatarBaseImage, 0, 0, canvas.width, canvas.height);
+        ctx.drawImage(natBaseImage, 0, 0, canvas.width, canvas.height);
+
+        const eyes = eyesSelect.value;
+        if (eyes !== 'none') {
+            const eyesImage = new Image();
+            eyesImage.src = eyes;
+            eyesImage.onload = () => {
+                ctx.drawImage(eyesImage, 0, 0, canvas.width, canvas.height);
+                drawHat();
+            };
+        } else {
+            drawHat();
+        }
+    }
+
+    function drawHat() {
+        const hat = hatSelect.value;
+        if (hat !== 'none') {
+            const hatImage = new Image();
+            hatImage.src = hat;
+            hatImage.onload = () => {
+                ctx.drawImage(hatImage, 0, 0, canvas.width, canvas.height);
+            };
+        }
+    }
 
     function drawBanner() {
         ctx.drawImage(bannerBaseImage, 0, 0, canvas.width, canvas.height); 
 
-        // Draw the base for banner image on top
         const baseBannerImage = new Image();
-        baseBannerImage.src = 'base/Base for banner.png';
+        baseBannerImage.src = 'https://raw.githubusercontent.com/midjordan23/mememaker/midjordan23-images/base/Base for banner.png';
         baseBannerImage.onload = () => {
             ctx.drawImage(baseBannerImage, 0, 0, canvas.width, canvas.height);
             drawBannerText();
         };
     }
 
-    // ... (rest of the code remains the same)
+    function drawBannerText() {
+        const line1Text = line1Input.value;
+        const line2Text = line2Input.value;
+        const line3Text = line3Input.value;
+
+        ctx.font = '35px "Machiato Show"';
+        ctx.fillStyle = '#000';
+        ctx.textAlign = 'center';
+
+        const textX = 330;
+        if (line1Text) ctx.fillText(line1Text, textX, 110);
+        if (line2Text) ctx.fillText(line2Text, textX, 150);
+        if (line3Text) ctx.fillText(line3Text, textX, 190);
+    }
+
+    bannerBaseImage.onload = drawMeme;
+    avatarBaseImage.onload = drawMeme;
 });
