@@ -248,4 +248,4 @@ document.addEventListener('DOMContentLoaded', () => {
         drawMeme();
     });
 
-    bannerBaseLet's update the JavaScript to ensure the base image, hats, and eyewear are correctly loaded. We'll ensure the paths are accurate and only update the image references. Here’s the final code:
+
