@@ -22,14 +22,8 @@ body {
     margin-bottom: 20px;
 }
 
-#header h1 {
-    font-size: 60px; /* Default size for larger screens */
-    line-height: 1.2;
-}
-
-#header h2 {
-    font-size: 40px; /* Default size for larger screens */
-    line-height: 1.2;
+#header h1, #header h2 {
+    margin: 0;
 }
 
 .text-primary {
@@ -39,6 +33,11 @@ body {
 
 .font-extrabold {
     font-weight: 800;
+}
+
+.text-h2 {
+    font-size: 40px; /* Adjust this value as needed */
+    line-height: 28px; /* Adjust this value as needed */
 }
 
 .text-center {
@@ -88,7 +87,7 @@ input, select {
     border: 1px solid rgb(118, 72, 36);
     width: 100%;
     max-width: 300px;
-        background-color: #FFFFFF;
+    background-color: #FFFFFF;
     color: #333333;
 }
 
@@ -164,6 +163,20 @@ input[type="file"] + label {
     transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
+input[type="file"] + label {
+    background-color: #783f04;
+    border-radius: 1000px;
+    box-shadow: 3px 3px #000000;
+    padding: 11px 14px;
+    color: #ffffff;
+    display: inline-block;
+    font: normal bold 20px/1 "Calibri", sans-serif;
+    text-align: center;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
 input[type="file"] + label:hover {
     background-color: #8C6239;
     box-shadow: 4px 4px #000000;
@@ -174,23 +187,4 @@ input[type="file"] + label:active {
     transform: translateY(2px);
 }
 
-/* Media Queries for Mobile Devices */
-@media (max-width: 768px) {
-    #header h1 {
-        font-size: 40px; /* Adjusted size for mobile screens */
-    }
-
-    #header h2 {
-        font-size: 30px; /* Adjusted size for mobile screens */
-    }
-
-    .control-row, .button-row {
-        flex-direction: column;
-        gap: 5px;
-    }
-
-    .control-row input, .control-row select, .button-row .btn {
-        width: 100%;
-        max-width: none;
-    }
-}
+/* Additional styles if needed */
