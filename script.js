@@ -236,13 +236,21 @@ document.addEventListener('DOMContentLoaded', () => {
         drawMeme();
     });
 
-       eyesSelect.addEventListener('change', () => {
+        eyesSelect.addEventListener('change', () => {
         const eyes = eyesSelect.value;
         if (eyes === 'none') {
             eyesImage.src = '';
         } else {
-            eyesImage.src = eyes;
-            eyesImage.onload = drawMeme;
+            // Correct the paths for the eyewear images
+            if (eyes === 'https://raw.githubusercontent.com/midjordan23/mememaker/main/eyewear/pixel%20glasses.png') {
+                eyesImage.src = 'https://raw.githubusercontent.com/midjordan23/mememaker/main/eyewear/pixel%20glasses.png';
+            } else if (eyes === 'https://raw.githubusercontent.com/midjordan23/mememaker/main/eyewear/eyes-sleep.png') {
+                eyesImage.src = 'https://raw.githubusercontent.com/midjordan23/mememaker/main/eyewear/eyes-sleep.png';
+            }
+            eyesImage.onload = () => {
+                console.log("Eyes loaded:", eyesImage.src);
+                drawMeme();
+            };
         }
         console.log("Eyes selected:", eyesImage.src);
         drawMeme();
@@ -251,3 +259,4 @@ document.addEventListener('DOMContentLoaded', () => {
     bannerBaseImage.onload = drawMeme;
     avatarBaseImage.onload = drawMeme;
 });
+
