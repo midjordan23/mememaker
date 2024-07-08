@@ -16,12 +16,36 @@ document.addEventListener('DOMContentLoaded', function () {
     const canvas = document.getElementById('meme-canvas');
     const ctx = canvas.getContext('2d');
 
+    const loadImage = (src, callback) => {
+        const img = new Image();
+        img.crossOrigin = "Anonymous"; // This is important for CORS issues
+        img.onload = () => callback(img);
+        img.src = src;
+    };
+
+    const drawImageOnCanvas = (src) => {
+        loadImage(src, (img) => {
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        });
+    };
+
+    document.getElementById('background-select').addEventListener('change', function () {
+        drawImageOnCanvas(this.value);
+    });
+
+    document.getElementById('upload-background').addEventListener('change', function (event) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            drawImageOnCanvas(e.target.result);
+        };
+        reader.readAsDataURL(event.target.files[0]);
+    });
+
     document.getElementById('generate-text').addEventListener('click', function () {
         const line1 = document.getElementById('line1-text').value;
         const line2 = document.getElementById('line2-text').value;
         const line3 = document.getElementById('line3-text').value;
 
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.fillStyle = '#000';
         ctx.font = '40px Machiato Show';
         ctx.textAlign = 'center';
