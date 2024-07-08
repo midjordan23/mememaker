@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cat Meme Maker with Speech Bubble</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="header">
+        <h1>hi, my name is nat</h1>
+        <h2>who are you?</h2>
+    </div>
+    <div id="meme-container">
+        <canvas id="meme-canvas" width="1500" height="500"></canvas>
+        <div id="controls">
+            <div class="control-row">
+                <label for="mode-select">Select Mode:</label>
+                <select id="mode-select">
+                    <option value="banner">Banner</option>
+                    <option value="avatar">Avatar</option>
+                </select>
+            </div>
+
+            <div id="banner-options">
+                <div class="control-row">
+                    <select id="background-select">
+                        <option value="Blue Illustration Anime Girl Twitter Header.png">Original</option>
+                        <option value="NewYorkBackground.png">New York</option>
+                        <option value="desert.png">Desert</option>
+                        <option value="space.png">Space</option>
+                        <option value="beach.png">Beach</option>
+                        <option value="stonks.png">Stonks</option>
+                        <option value="nothingwasthesame.png">Sky</option>
+                        <option value="Lava.png">Lava</option>
+                    </select>
+                    <input type="file" id="upload-background" accept="image/*">
+                    <label for="upload-background">Choose file</label>
+                </div>
+                <div class="control-row">
+                    <input type="text" id="line1-text" placeholder="Enter line 1" maxlength="15">
+                    <input type="text" id="line2-text" placeholder="Enter line 2" maxlength="15">
+                    <input type="text" id="line3-text" placeholder="Enter line 3" maxlength="15">
+                </div>
+            </div>
+
+            <div id="avatar-options" style="display: none;">
+                <div class="control-row">
+                    <select id="background-select-avatar">
+                        <option value="avifirstoption.png">First Option</option>
+                        <option value="avibasevolcano.png">Volcano</option>
+                        <option value="avibasestonks.png">Stonks</option>
+                        <option value="avibasedrake.png">Sky</option>
+                    </select>
+                    <input type="file" id="upload-background-avatar" accept="image/*">
+                    <label for="upload-background-avatar">Choose file</label>
+                </div>
+                <div class="control-row">
+                    <select id="hat-select">
+                        <option value="none">None</option>
+                        <option value="Hats/nathat.png">Nat Hat</option>
+                        <option value="Hats/mcdonalds hat.png">McDonald's Hat</option>
+                    </select>
+                    <select id="eyes-select">
+                        <option value="none">None</option>
+                        <option value="Eyes/pixel glasses.png">Pixel Glasses</option>
+                        <option value="Eyes/eyes-sleep.png">Sleep Mask</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="button-row">
+                <button id="generate-text">Generate Text</button>
+                <button id="reset">Reset</button>
+                <button id="download">Download</button>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
