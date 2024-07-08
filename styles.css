@@ -1,5 +1,12 @@
+@font-face {
+    font-family: 'Machiato Show';
+    src: url('https://raw.githubusercontent.com/midjordan23/mememaker/main/fonts/Machiato%20Show.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+
 body {
-    font-family: "Machiato Show", sans-serif;
+    font-family: 'Machiato Show', sans-serif;
     background-color: #FDF1E5;
     display: flex;
     flex-direction: column;
@@ -15,21 +22,22 @@ body {
     margin-bottom: 20px;
 }
 
-#header h1, #header h2 {
+.text-primary {
     --tw-text-opacity: 1;
     color: rgb(118 72 36 / var(--tw-text-opacity));
+}
+
+.font-extrabold {
     font-weight: 800;
+}
+
+.text-h2 {
+    font-size: 40px;
+    line-height: 28px;
+}
+
+.text-center {
     text-align: center;
-}
-
-#header h1 {
-    font-size: 40px;
-    line-height: 1.2;
-}
-
-#header h2 {
-    font-size: 40px;
-    line-height: 1.2;
 }
 
 #controls {
@@ -59,7 +67,7 @@ body {
 }
 
 .btn:active, button:active {
-    box-shadow: 1px 1px #301902;
+    box-shadow: 1px 1px #000000;
     transform: translateY(2px);
 }
 
@@ -75,9 +83,8 @@ input, select {
     border: 1px solid rgb(118, 72, 36);
     width: 100%;
     max-width: 300px;
-    background-color: #f2ece6;
+    background-color: #FFFFFF;
     color: #333333;
-    font-weight: bold;
 }
 
 input::placeholder {
