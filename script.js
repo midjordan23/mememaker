@@ -35,9 +35,17 @@ body {
     font-weight: 800;
 }
 
-.text-h2 {
-    font-size: 60px; /* Adjust this value as needed */
-    line-height: 28px; /* Adjust this value as needed */
+#header 
+h1 {
+    font-size: 60px; /* Adjust this value to enlarge the h1 text */
+    line-height: 1.2; /* Adjust the line-height if necessary */
+}
+
+#header h2 {
+    font-size: 40px; /* Adjust this value to enlarge the h2 text */
+    line-height: 1.2; /* Adjust the line-height if necessary */
+}
+
 }
 
 .text-center {
