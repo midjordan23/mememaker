@@ -1,4 +1,3 @@
-// Ensure this is the correct path to your image URLs and other resources
 document.addEventListener('DOMContentLoaded', function () {
     const modeSelect = document.getElementById('mode-select');
     const bannerOptions = document.getElementById('banner-options');
@@ -14,7 +13,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // Example of setting up canvas drawing functions
     const canvas = document.getElementById('meme-canvas');
     const ctx = canvas.getContext('2d');
 
