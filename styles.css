@@ -22,6 +22,16 @@ body {
     margin-bottom: 20px;
 }
 
+#header h1 {
+    font-size: 60px; /* Default size for larger screens */
+    line-height: 1.2;
+}
+
+#header h2 {
+    font-size: 40px; /* Default size for larger screens */
+    line-height: 1.2;
+}
+
 .text-primary {
     --tw-text-opacity: 1;
     color: rgb(118 72 36 / var(--tw-text-opacity));
@@ -29,11 +39,6 @@ body {
 
 .font-extrabold {
     font-weight: 800;
-}
-
-.text-h2 {
-    font-size: 40px;
-    line-height: 28px;
 }
 
 .text-center {
@@ -167,4 +172,25 @@ input[type="file"] + label:hover {
 input[type="file"] + label:active {
     box-shadow: 1px 1px #000000;
     transform: translateY(2px);
+}
+
+/* Media Queries for Mobile Devices */
+@media (max-width: 768px) {
+    #header h1 {
+        font-size: 40px; /* Adjusted size for mobile screens */
+    }
+
+    #header h2 {
+        font-size: 30px; /* Adjusted size for mobile screens */
+    }
+
+    .control-row, .button-row {
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .control-row input, .control-row select, .button-row .btn {
+        width: 100%;
+        max-width: none;
+    }
 }
