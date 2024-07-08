@@ -1,262 +1,190 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const canvas = document.getElementById('meme-canvas');
-    const ctx = canvas.getContext('2d');
-    const modeSelect = document.getElementById('mode-select');
-    const backgroundSelect = document.getElementById('background-select');
-    const backgroundSelectAvatar = document.getElementById('background-select-avatar');
-    const uploadBackground = document.getElementById('upload-background');
-    const uploadBackgroundAvatar = document.getElementById('upload-background-avatar');
-    const line1Input = document.getElementById('line1-text');
-    const line2Input = document.getElementById('line2-text');
-    const line3Input = document.getElementById('line3-text');
-    const hatSelect = document.getElementById('hat-select');
-    const eyesSelect = document.getElementById('eyes-select');
-    const generateTextButton = document.getElementById('generate-text');
-    const resetButton = document.getElementById('reset');
-    const downloadButton = document.getElementById('download');
-    const drawButton = document.getElementById('draw');
-    const undoButton = document.getElementById('undo');
-    const colorSelect = document.getElementById('color-select');
-    const colorButton = document.getElementById('color-button');
+@font-face {
+    font-family: 'Machiato Show';
+    src: url('https://raw.githubusercontent.com/midjordan23/mememaker/main/fonts/Machiato%20Show.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
 
-    let drawing = false;
-    let drawColor = 'black';
-    let drawHistory = [];
+body {
+    font-family: 'Machiato Show', sans-serif;
+    background-color: #FDF1E5;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    margin: 0;
+    transition: background-color 10s ease;
+}
 
-    let bannerBaseImage = new Image();
-    let avatarBaseImage = new Image();
-    let natBaseImage = new Image();
-    let hatImage = new Image();
-    let eyesImage = new Image();
+#header {
+    text-align: center;
+    margin-bottom: 20px;
+}
 
-    natBaseImage.src = 'https://raw.githubusercontent.com/midjordan23/mememaker/main/base/BaseNatofficial.png'; // Base image that does not change
-    
-    let bannerBaseSrc = 'https://raw.githubusercontent.com/midjordan23/mememaker/main/backgrounds/avistonks.png'; // Default banner image
-    let avatarBaseSrc = 'https://raw.githubusercontent.com/midjordan23/mememaker/main/backgrounds/avibasedrake.png'; // Default avatar image
+#header h1, #header h2 {
+    margin: 0;
+}
 
-    bannerBaseImage.src = bannerBaseSrc;
-    avatarBaseImage.src = avatarBaseSrc;
+.text-primary {
+    --tw-text-opacity: 1;
+    color: rgb(118 72 36 / var(--tw-text-opacity));
+}
 
-    modeSelect.addEventListener('change', () => {
-        const selectedMode = modeSelect.value;
-        if (selectedMode === 'avatar') {
-            document.getElementById('banner-options').style.display = 'none';
-            document.getElementById('avatar-options').style.display = 'block';
-            canvas.width = 500;
-            canvas.height = 500;
-        } else {
-            document.getElementById('banner-options').style.display = 'block';
-            document.getElementById('avatar-options').style.display = 'none';
-            canvas.width = 1500;
-            canvas.height = 500;
-        }
-        drawMeme();
-    });
+.font-extrabold {
+    font-weight: 800;
+}
 
-    backgroundSelectAvatar.addEventListener('change', () => {
-        avatarBaseSrc = backgroundSelectAvatar.value;
-        avatarBaseImage.src = avatarBaseSrc;
-        avatarBaseImage.onload = drawMeme;
-    });
+.text-h2 {
+    font-size: 40px; /* Adjust this value as needed */
+    line-height: 28px; /* Adjust this value as needed */
+}
 
-    backgroundSelect.addEventListener('change', () => {
-        bannerBaseSrc = backgroundSelect.value;
-        bannerBaseImage.src = bannerBaseSrc;
-        bannerBaseImage.onload = drawMeme;
-    });
+.text-center {
+    text-align: center;
+}
 
-    uploadBackground.addEventListener('change', (event) => handleFileUpload(event, 'banner'));
-    uploadBackgroundAvatar.addEventListener('change', (event) => handleFileUpload(event, 'avatar'));
+#controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+}
 
-    function handleFileUpload(event, mode) {
-        const file = event.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                if (mode === 'banner') {
-                    bannerBaseImage.src = e.target.result;
-                    bannerBaseImage.onload = drawMeme;
-                } else {
-                    avatarBaseImage.src = e.target.result;
-                    avatarBaseImage.onload = drawMeme;
-                }
-            };
-            reader.readAsDataURL(file);
-        }
-    }
+.btn, button {
+    background-color: #783f04;
+    border-radius: 1000px;
+    box-shadow: 3px 3px #000000;
+    padding: 11px 14px;
+    color: #ffffff;
+    display: inline-block;
+    font: normal bold 20px/1 "Calibri", sans-serif;
+    text-align: center;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
 
-    generateTextButton.addEventListener('click', drawMeme);
+.btn:hover, button:hover {
+    background-color: #8C6239;
+    box-shadow: 4px 4px #000000;
+}
 
-    resetButton.addEventListener('click', () => {
-        line1Input.value = '';
-        line2Input.value = '';
-        line3Input.value = '';
-        hatSelect.value = 'none';
-        eyesSelect.value = 'none';
-        hatImage.src = '';
-        eyesImage.src = '';
-        drawHistory = [];
-        drawMeme();
-    });
+.btn:active, button:active {
+    box-shadow: 1px 1px #000000;
+    transform: translateY(2px);
+}
 
-    downloadButton.addEventListener('click', () => {
-        const link = document.createElement('a');
-        link.href = canvas.toDataURL('image/png');
-        link.download = 'meme.png';
-        link.click();
-    });
+.btn-icon {
+    margin-right: 8px;
+}
 
-    drawButton.addEventListener('click', () => {
-        canvas.addEventListener('mousedown', startDrawing);
-        canvas.addEventListener('mouseup', stopDrawing);
-        canvas.addEventListener('mousemove', draw);
-        undoButton.style.display = 'inline-block';
-        colorButton.style.display = 'inline-block';
-    });
+input, select {
+    margin: 5px;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid rgb(118, 72, 36);
+    width: 100%;
+    max-width: 300px;
+    background-color: #FFFFFF;
+    color: #333333;
+}
 
-    colorButton.addEventListener('click', () => {
-        colorSelect.click();
-    });
+input::placeholder {
+    color: #999999;
+}
 
-    colorSelect.addEventListener('input', (e) => {
-        drawColor = e.target.value;
-        colorButton.style.backgroundColor = drawColor;
-    });
+select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3E%3Cpath fill='%23333333' d='M0 0l4 4 4-4z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 30px;
+}
 
-    undoButton.addEventListener('click', () => {
-        if (drawHistory.length > 0) {
-            drawHistory.pop();
-            drawMeme();
-            restoreDrawing();
-        }
-    });
+#controls select {
+    width: auto;
+}
 
-    function startDrawing(e) {
-        drawing = true;
-        draw(e);
-    }
+#meme-container {
+    text-align: center;
+}
 
-    function stopDrawing() {
-        drawing = false;
-        ctx.beginPath();
-        // Save the current state of the canvas to the history
-        drawHistory.push(ctx.getImageData(0, 0, canvas.width, canvas.height));
-    }
+.control-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    width: 100%;
+    max-width: 600px;
+}
 
-    function draw(e) {
-        if (!drawing) return;
-        ctx.lineWidth = 5;
-        ctx.lineCap = 'round';
-        ctx.strokeStyle = drawColor;
+.button-row {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    max-width: 600px;
+}
 
-        ctx.lineTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.moveTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
-    }
+.button-row .btn {
+    flex: 1;
+    margin: 0;
+}
 
-    function restoreDrawing() {
-        for (let i = 0; i < drawHistory.length; i++) {
-            ctx.putImageData(drawHistory[i], 0, 0);
-        }
-    }
+#background-select, #upload-background,
+#background-select-avatar, #upload-background-avatar {
+    flex: 1;
+    max-width: 45%;
+}
 
-    function drawMeme() {
-        console.log("Drawing meme");
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        const selectedMode = modeSelect.value;
+input[type="file"] {
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+}
 
-        if (selectedMode === 'avatar') {
-            drawAvatar();
-        } else {
-            drawBanner();
-        }
-        restoreDrawing();
-    }
+input[type="file"] + label {
+    background-color: #783f04;
+    border-radius: 1000px;
+    box-shadow: 3px 3px #000000;
+    padding: 11px 14px;
+    color: #ffffff;
+    display: inline-block;
+    font: normal bold 20px/1 "Calibri", sans-serif;
+    text-align: center;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
 
-    function drawAvatar() {
-        console.log("Drawing avatar");
-        // Draw background (either selected or uploaded)
-        ctx.drawImage(avatarBaseImage, 0, 0, canvas.width, canvas.height);
+input[type="file"] + label {
+    background-color: #783f04;
+    border-radius: 1000px;
+    box-shadow: 3px 3px #000000;
+    padding: 11px 14px;
+    color: #ffffff;
+    display: inline-block;
+    font: normal bold 20px/1 "Calibri", sans-serif;
+    text-align: center;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
 
-        // Draw base image
-        ctx.drawImage(natBaseImage, 0, 0, canvas.width, canvas.height);
+input[type="file"] + label:hover {
+    background-color: #8C6239;
+    box-shadow: 4px 4px #000000;
+}
 
-        // Draw hat
-        if (hatImage.src && hatImage.src !== window.location.href) {
-            console.log("Drawing hat");
-            ctx.drawImage(hatImage, 0, 0, canvas.width, canvas.height);
-        }
+input[type="file"] + label:active {
+    box-shadow: 1px 1px #000000;
+    transform: translateY(2px);
+}
 
-        // Draw eyes
-        if (eyesImage.src && eyesImage.src !== window.location.href) {
-            console.log("Drawing eyes");
-            ctx.drawImage(eyesImage, 0, 0, canvas.width, canvas.height);
-        }
-    }
-
-    function drawBanner() {
-        console.log("Drawing banner");
-        ctx.drawImage(bannerBaseImage, 0, 0, canvas.width, canvas.height); 
-
-        // Draw the base for banner image on top
-        const baseBannerImage = new Image();
-        baseBannerImage.src = 'https://raw.githubusercontent.com/midjordan23/mememaker/main/base/Base%20for%20banner.png';
-        baseBannerImage.onload = () => {
-            ctx.drawImage(baseBannerImage, 0, 0, canvas.width, canvas.height);
-            drawBannerText();
-        };
-    }
-
-    function drawBannerText() {
-        const line1Text = line1Input.value;
-        const line2Text = line2Input.value;
-        const line3Text = line3Input.value;
-
-        ctx.font = '35px "Machiato Show"';
-        ctx.fillStyle = '#000';
-        ctx.textAlign = 'center';
-
-        const textX = 330;
-        if (line1Text) ctx.fillText(line1Text, textX, 110);
-        if (line2Text) ctx.fillText(line2Text, textX, 150);
-        if (line3Text) ctx.fillText(line3Text, textX, 190);
-    }
-
-    // Event listeners for hat and eyes selection
-    hatSelect.addEventListener('change', () => {
-        const hat = hatSelect.value;
-        if (hat === 'none') {
-            hatImage.src = '';
-        } else {
-            hatImage.src = hat;
-            hatImage.onload = drawMeme;
-        }
-        console.log("Hat selected:", hatImage.src);
-        drawMeme();
-    });
-
-        eyesSelect.addEventListener('change', () => {
-        const eyes = eyesSelect.value;
-        if (eyes === 'none') {
-            eyesImage.src = '';
-        } else {
-            // Correct the paths for the eyewear images
-            if (eyes === 'https://raw.githubusercontent.com/midjordan23/mememaker/main/eyewear/pixel%20glasses.png') {
-                eyesImage.src = 'https://raw.githubusercontent.com/midjordan23/mememaker/main/eyewear/pixel%20glasses.png';
-            } else if (eyes === 'https://raw.githubusercontent.com/midjordan23/mememaker/main/eyewear/eyes-sleep.png') {
-                eyesImage.src = 'https://raw.githubusercontent.com/midjordan23/mememaker/main/eyewear/eyes-sleep.png';
-            }
-            eyesImage.onload = () => {
-                console.log("Eyes loaded:", eyesImage.src);
-                drawMeme();
-            };
-        }
-        console.log("Eyes selected:", eyesImage.src);
-        drawMeme();
-    });
-
-    bannerBaseImage.onload = drawMeme;
-    avatarBaseImage.onload = drawMeme;
-});
-
+/* Additional styles if needed */
