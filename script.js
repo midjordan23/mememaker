@@ -115,10 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     colorButton.addEventListener('click', () => {
-        colorSelect.click();
-    });
-
-    colorSelect.addEventListener('input', (e) => {
+            colorSelect.addEventListener('input', (e) => {
         drawColor = e.target.value;
         colorButton.style.backgroundColor = drawColor;
     });
@@ -236,21 +233,13 @@ document.addEventListener('DOMContentLoaded', () => {
         drawMeme();
     });
 
-   eyesSelect.addEventListener('change', () => {
+    eyesSelect.addEventListener('change', () => {
         const eyes = eyesSelect.value;
         if (eyes === 'none') {
             eyesImage.src = '';
         } else {
-            // Use the provided paths for the eyewear images
-            if (eyes === 'Eyes/pixel glasses.png') {
-                eyesImage.src = 'pixel glasses.png';
-            } else if (eyes === 'Eyes/eyes-sleep.png') {
-                eyesImage.src = 'eyes-sleep.png';
-            }
-            eyesImage.onload = () => {
-                console.log("Eyes loaded:", eyesImage.src);
-                drawMeme();
-            };
+            eyesImage.src = eyes;
+            eyesImage.onload = drawMeme;
         }
         console.log("Eyes selected:", eyesImage.src);
         drawMeme();
