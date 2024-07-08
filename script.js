@@ -14,37 +14,28 @@ document.addEventListener('DOMContentLoaded', () => {
     const generateTextButton = document.getElementById('generate-text');
     const resetButton = document.getElementById('reset');
     const downloadButton = document.getElementById('download');
-    
+    const drawButton = document.getElementById('draw');
+    const undoButton = document.getElementById('undo');
+    const colorSelect = document.getElementById('color-select');
+    const colorButton = document.getElementById('color-button');
+
+    let drawing = false;
+    let drawColor = 'black';
+    let drawHistory = [];
+
     let bannerBaseImage = new Image();
     let avatarBaseImage = new Image();
     let natBaseImage = new Image();
+    let hatImage = new Image();
+    let eyesImage = new Image();
 
-    bannerBaseImage.crossOrigin = "Anonymous";
-    avatarBaseImage.crossOrigin = "Anonymous";
-    natBaseImage.crossOrigin = "Anonymous";
-
-    natBaseImage.src = 'https://raw.githubusercontent.com/midjordan23/mememaker/midjordan23-images/base/BaseNatofficial.png';
+    natBaseImage.src = 'https://raw.githubusercontent.com/midjordan23/mememaker/main/base/BaseNatofficial.png'; // Base image that does not change
     
-    let bannerBaseSrc = 'https://raw.githubusercontent.com/midjordan23/mememaker/midjordan23-images/backgrounds/Blue%20Illustration%20Anime%20Girl%20Twitter%20Header.png';
-    let avatarBaseSrc = 'https://raw.githubusercontent.com/midjordan23/mememaker/midjordan23-images/backgrounds/AVIBASEfirstoption.png';
+    let bannerBaseSrc = 'https://raw.githubusercontent.com/midjordan23/mememaker/main/backgrounds/avistonks.png'; // Default banner image
+    let avatarBaseSrc = 'https://raw.githubusercontent.com/midjordan23/mememaker/main/backgrounds/avibasedrake.png'; // Default avatar image
 
     bannerBaseImage.src = bannerBaseSrc;
     avatarBaseImage.src = avatarBaseSrc;
-
-    bannerBaseImage.onload = () => {
-        console.log("Banner base image loaded");
-        drawMeme();
-    };
-    bannerBaseImage.onerror = () => console.error("Error loading banner base image");
-
-    avatarBaseImage.onload = () => {
-        console.log("Avatar base image loaded");
-        drawMeme();
-    };
-    avatarBaseImage.onerror = () => console.error("Error loading avatar base image");
-
-    natBaseImage.onload = () => console.log("Nat base image loaded");
-    natBaseImage.onerror = () => console.error("Error loading nat base image");
 
     modeSelect.addEventListener('change', () => {
         const selectedMode = modeSelect.value;
@@ -102,6 +93,9 @@ document.addEventListener('DOMContentLoaded', () => {
         line3Input.value = '';
         hatSelect.value = 'none';
         eyesSelect.value = 'none';
+        hatImage.src = '';
+        eyesImage.src = '';
+        drawHistory = [];
         drawMeme();
     });
 
@@ -112,7 +106,63 @@ document.addEventListener('DOMContentLoaded', () => {
         link.click();
     });
 
+    drawButton.addEventListener('click', () => {
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('mousemove', draw);
+        undoButton.style.display = 'inline-block';
+        colorButton.style.display = 'inline-block';
+    });
+
+    colorButton.addEventListener('click', () => {
+        colorSelect.click();
+    });
+
+    colorSelect.addEventListener('input', (e) => {
+        drawColor = e.target.value;
+        colorButton.style.backgroundColor = drawColor;
+    });
+
+    undoButton.addEventListener('click', () => {
+        if (drawHistory.length > 0) {
+            drawHistory.pop();
+            drawMeme();
+            restoreDrawing();
+        }
+    });
+
+    function startDrawing(e) {
+        drawing = true;
+        draw(e);
+    }
+
+    function stopDrawing() {
+        drawing = false;
+        ctx.beginPath();
+        // Save the current state of the canvas to the history
+        drawHistory.push(ctx.getImageData(0, 0, canvas.width, canvas.height));
+    }
+
+    function draw(e) {
+        if (!drawing) return;
+        ctx.lineWidth = 5;
+        ctx.lineCap = 'round';
+        ctx.strokeStyle = drawColor;
+
+        ctx.lineTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
+    }
+
+    function restoreDrawing() {
+        for (let i = 0; i < drawHistory.length; i++) {
+            ctx.putImageData(drawHistory[i], 0, 0);
+        }
+    }
+
     function drawMeme() {
+        console.log("Drawing meme");
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         const selectedMode = modeSelect.value;
 
@@ -121,51 +171,41 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             drawBanner();
         }
+        restoreDrawing();
     }
 
     function drawAvatar() {
+        console.log("Drawing avatar");
+        // Draw background (either selected or uploaded)
         ctx.drawImage(avatarBaseImage, 0, 0, canvas.width, canvas.height);
+
+        // Draw base image
         ctx.drawImage(natBaseImage, 0, 0, canvas.width, canvas.height);
 
-        const eyes = eyesSelect.value;
-        if (eyes !== 'none') {
-            const eyesImage = new Image();
-            eyesImage.crossOrigin = "Anonymous";
-            eyesImage.src = eyes;
-            eyesImage.onload = () => {
-                ctx.drawImage(eyesImage, 0, 0, canvas.width, canvas.height);
-                drawHat();
-            };
-            eyesImage.onerror = () => console.error("Error loading eyes image");
-        } else {
-            drawHat();
+        // Draw hat
+        if (hatImage.src && hatImage.src !== window.location.href) {
+            console.log("Drawing hat");
+            ctx.drawImage(hatImage, 0, 0, canvas.width, canvas.height);
         }
-    }
 
-    function drawHat() {
-        const hat = hatSelect.value;
-        if (hat !== 'none') {
-            const hatImage = new Image();
-            hatImage.crossOrigin = "Anonymous";
-            hatImage.src = hat;
-            hatImage.onload = () => {
-                ctx.drawImage(hatImage, 0, 0, canvas.width, canvas.height);
-            };
-            hatImage.onerror = () => console.error("Error loading hat image");
+        // Draw eyes
+        if (eyesImage.src && eyesImage.src !== window.location.href) {
+            console.log("Drawing eyes");
+            ctx.drawImage(eyesImage, 0, 0, canvas.width, canvas.height);
         }
     }
 
     function drawBanner() {
+        console.log("Drawing banner");
         ctx.drawImage(bannerBaseImage, 0, 0, canvas.width, canvas.height); 
 
+        // Draw the base for banner image on top
         const baseBannerImage = new Image();
-        baseBannerImage.crossOrigin = "Anonymous";
-        baseBannerImage.src = 'https://raw.githubusercontent.com/midjordan23/mememaker/midjordan23-images/base/Base%20for%20banner.png';
+        baseBannerImage.src = 'https://raw.githubusercontent.com/midjordan23/mememaker/main/base/Base%20for%20banner.png';
         baseBannerImage.onload = () => {
             ctx.drawImage(baseBannerImage, 0, 0, canvas.width, canvas.height);
             drawBannerText();
         };
-        baseBannerImage.onerror = () => console.error("Error loading base banner image");
     }
 
     function drawBannerText() {
@@ -182,4 +222,30 @@ document.addEventListener('DOMContentLoaded', () => {
         if (line2Text) ctx.fillText(line2Text, textX, 150);
         if (line3Text) ctx.fillText(line3Text, textX, 190);
     }
-});
+
+    // Event listeners for hat and eyes selection
+    hatSelect.addEventListener('change', () => {
+        const hat = hatSelect.value;
+        if (hat === 'none') {
+            hatImage.src = '';
+        } else {
+            hatImage.src = hat;
+            hatImage.onload = drawMeme;
+        }
+        console.log("Hat selected:", hatImage.src);
+        drawMeme();
+    });
+
+    eyesSelect.addEventListener('change', () => {
+        const eyes = eyesSelect.value;
+        if (eyes === 'none') {
+            eyesImage.src = '';
+        } else {
+            eyesImage.src = eyes;
+            eyesImage.onload = drawMeme;
+        }
+        console.log("Eyes selected:", eyesImage.src);
+        drawMeme();
+    });
+
+    bannerBaseLet's update the JavaScript to ensure the base image, hats, and eyewear are correctly loaded. We'll ensure the paths are accurate and only update the image references. Here’s the final code:
