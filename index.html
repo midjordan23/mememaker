@@ -1,78 +1,114 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Cat Meme Maker with Speech Bubble</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-    <div id="header">
-        <h1>hi, my name is nat</h1>
-        <h2>who are you?</h2>
-    </div>
-    <div id="meme-container">
-        <canvas id="meme-canvas" width="1500" height="500"></canvas>
-        <div id="controls">
-            <div class="control-row">
-                <label for="mode-select">Select Mode:</label>
-                <select id="mode-select">
-                    <option value="banner">Banner</option>
-                    <option value="avatar">Avatar</option>
-                </select>
-            </div>
+document.addEventListener('DOMContentLoaded', () => {
+    const canvas = document.getElementById('meme-canvas');
+    const ctx = canvas.getContext('2d');
+    const modeSelect = document.getElementById('mode-select');
+    const backgroundSelect = document.getElementById('background-select');
+    const backgroundSelectAvatar = document.getElementById('background-select-avatar');
+    const uploadBackground = document.getElementById('upload-background');
+    const uploadBackgroundAvatar = document.getElementById('upload-background-avatar');
+    const line1Input = document.getElementById('line1-text');
+    const line2Input = document.getElementById('line2-text');
+    const line3Input = document.getElementById('line3-text');
+    const hatSelect = document.getElementById('hat-select');
+    const eyesSelect = document.getElementById('eyes-select');
+    const generateTextButton = document.getElementById('generate-text');
+    const resetButton = document.getElementById('reset');
+    const downloadButton = document.getElementById('download');
+    const drawButton = document.getElementById('draw');
+    const undoButton = document.getElementById('undo');
+    const colorSelect = document.getElementById('color-select');
+    const colorButton = document.getElementById('color-button');
 
-            <div id="banner-options">
-                <div class="control-row">
-                    <select id="background-select">
-                        <option value="https://raw.githubusercontent.com/midjordan23/mememaker/main/backgrounds/avistonks.png">Stonks</option>
-                        <option value="https://raw.githubusercontent.com/midjordan23/mememaker/main/backgrounds/avidrake.png">Drake</option>
-                        <option value="https://raw.githubusercontent.com/midjordan23/mememaker/main/backgrounds/avi%20basevolcano.png">Volcano</option>
-                    </select>
-                    <input type="file" id="upload-background" accept="image/*">
-                    <label for="upload-background">Choose file</label>
-                </div>
-                <div class="control-row">
-                    <input type="text" id="line1-text" placeholder="Enter line 1" maxlength="15">
-                    <input type="text" id="line2-text" placeholder="Enter line 2" maxlength="15">
-                    <input type="text" id="line3-text" placeholder="Enter line 3" maxlength="15">
-                </div>
-            </div>
+    let drawing = false;
+    let drawColor = 'black';
+    let drawHistory = [];
 
-            <div id="avatar-options" style="display: none;">
-                <div class="control-row">
-                    <select id="background-select-avatar">
-                        <option value="https://raw.githubusercontent.com/midjordan23/mememaker/main/backgrounds/avibasedrake.png">Drake</option>
-                        <option value="https://raw.githubusercontent.com/midjordan23/mememaker/main/backgrounds/avibasestonks.png">Stonks</option>
-                        <option value="https://raw.githubusercontent.com/midjordan23/mememaker/main/backgrounds/avibasevolcano.png">Volcano</option>
-                    </select>
-                    <input type="file" id="upload-background-avatar" accept="image/*">
-                    <label for="upload-background-avatar">Choose file</label>
-                </div>
-                <div class="control-row">
-                    <select id="hat-select">
-                        <option value="none">None</option>
-                        <option value="https://raw.githubusercontent.com/midjordan23/mememaker/main/hats/nathat.png">Nat Hat</option>
-                        <option value="https://raw.githubusercontent.com/midjordan23/mememaker/main/hats/mcdonalds%20hat.png">McDonald's Hat</option>
-                    </select>
-                    <select id="eyes-select">
-                        <option value="none">None</option>
-                        <option value="https://raw.githubusercontent.com/midjordan23/mememaker/main/eyewear/pixel%20glasses.png">Pixel Glasses</option>
-                        <option value="https://raw.githubusercontent.com/midjordan23/mememaker/main/eyewear/eyes-sleep.png">Sleep Mask</option>
-                    </select>
-                </div>
-            </div>
+    let bannerBaseImage = new Image();
+    let avatarBaseImage = new Image();
+    let natBaseImage = new Image();
+    let hatImage = new Image();
+    let eyesImage = new Image();
 
-            <div class="button-row">
-                <button id="generate-text">Generate Text</button>
-                <button id="reset">Reset</button>
-                <button id="download">Download</button>
-                <button id="draw">Draw</button>
-                <button id="undo" style="display: none;">Undo</button>
-                <button id="color-button" style="display: none;">Select Color</button>
-                <input type="color" id="color-select" style="display: none;">
-            </div>
-        </div>
-    </div>
-    <script src="script.js"></script>
-</body>
-</html>
+    natBaseImage.src = 'https://raw.githubusercontent.com/midjordan23/mememaker/main/base/BaseNatofficial.png'; // Base image that does not change
+    
+    let bannerBaseSrc = 'https://raw.githubusercontent.com/midjordan23/mememaker/main/backgrounds/avistonks.png'; // Default banner image
+    let avatarBaseSrc = 'https://raw.githubusercontent.com/midjordan23/mememaker/main/backgrounds/avibasedrake.png'; // Default avatar image
+
+    bannerBaseImage.src = bannerBaseSrc;
+    avatarBaseImage.src = avatarBaseSrc;
+
+    modeSelect.addEventListener('change', () => {
+        const selectedMode = modeSelect.value;
+        if (selectedMode === 'avatar') {
+            document.getElementById('banner-options').style.display = 'none';
+            document.getElementById('avatar-options').style.display = 'block';
+            canvas.width = 500;
+            canvas.height = 500;
+        } else {
+            document.getElementById('banner-options').style.display = 'block';
+            document.getElementById('avatar-options').style.display = 'none';
+            canvas.width = 1500;
+            canvas.height = 500;
+        }
+        drawMeme();
+    });
+
+    backgroundSelectAvatar.addEventListener('change', () => {
+        avatarBaseSrc = backgroundSelectAvatar.value;
+        avatarBaseImage.src = avatarBaseSrc;
+        avatarBaseImage.onload = drawMeme;
+    });
+
+    backgroundSelect.addEventListener('change', () => {
+        bannerBaseSrc = backgroundSelect.value;
+        bannerBaseImage.src = bannerBaseSrc;
+        bannerBaseImage.onload = drawMeme;
+    });
+
+    uploadBackground.addEventListener('change', (event) => handleFileUpload(event, 'banner'));
+    uploadBackgroundAvatar.addEventListener('change', (event) => handleFileUpload(event, 'avatar'));
+
+    function handleFileUpload(event, mode) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                if (mode === 'banner') {
+                    bannerBaseImage.src = e.target.result;
+                    bannerBaseImage.onload = drawMeme;
+                } else {
+                    avatarBaseImage.src = e.target.result;
+                    avatarBaseImage.onload = drawMeme;
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    generateTextButton.addEventListener('click', drawMeme);
+
+    resetButton.addEventListener('click', () => {
+        line1Input.value = '';
+        line2Input.value = '';
+        line3Input.value = '';
+        hatSelect.value = 'none';
+        eyesSelect.value = 'none';
+        hatImage.src = '';
+        eyesImage.src = '';
+        drawHistory = [];
+        drawMeme();
+    });
+
+    downloadButton.addEventListener('click', () => {
+        const link = document.createElement('a');
+        link.href = canvas.toDataURL('image/png');
+        link.download = 'meme.png';
+        link.click();
+    });
+
+    drawButton.addEventListener('click', () => {
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('mousemove', draw);
+        undoButton.style.display = 'inline-block';
+        colorButton.style.display = 'inline-block';
