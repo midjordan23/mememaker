@@ -36,7 +36,7 @@ body {
 }
 
 .text-h2 {
-    font-size: 40px; /* Adjust this value as needed */
+    font-size: 60px; /* Adjust this value as needed */
     line-height: 28px; /* Adjust this value as needed */
 }
 
