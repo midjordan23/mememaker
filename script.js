@@ -37,12 +37,12 @@ body {
 
 #header 
 h1 {
-    font-size: 60px; /* Adjust this value to enlarge the h1 text */
+    font-size: 610px; /* Adjust this value to enlarge the h1 text */
     line-height: 1.2; /* Adjust the line-height if necessary */
 }
 
 #header h2 {
-    font-size: 40px; /* Adjust this value to enlarge the h2 text */
+    font-size: 410px; /* Adjust this value to enlarge the h2 text */
     line-height: 1.2; /* Adjust the line-height if necessary */
 }
 
